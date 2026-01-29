@@ -1,0 +1,9 @@
+streamlit
+pandas
+numpy
+requests
+beautifulsoup4
+selenium
+opencv-python
+pillow
+twilio
