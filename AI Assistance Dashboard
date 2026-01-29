@@ -1,0 +1,291 @@
+import streamlit as st
+from python_projects import *
+from linuxt import *
+from Github_task import *
+from machine_learning import *
+
+st.set_page_config(page_title="Anjali's Projects", layout="centered")
+
+# Session state
+if "view" not in st.session_state:
+    st.session_state.view = "main"
+if "selected_category" not in st.session_state:
+    st.session_state.selected_category = None
+if "selected_project" not in st.session_state:
+    st.session_state.selected_project = None
+
+# Header
+st.title("🚀 Anjali's Project Hub")
+
+# Back button
+if st.session_state.view != "main":
+    if st.button("🔙 Back"):
+        if st.session_state.view == "project":
+            st.session_state.view = "category"
+            st.session_state.selected_project = None
+        elif st.session_state.view == "category":
+            st.session_state.view = "main"
+            st.session_state.selected_category = None
+        st.rerun()
+
+
+# Main View: Category Selection
+if st.session_state.view == "main":
+    st.subheader("💼 Select a Project Category")
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        if st.button("🐍 Python Projects"):
+            st.session_state.selected_category = "python"
+            st.session_state.view = "category"
+    with col2:
+        if st.button("🐧 Linux Projects"):
+            st.session_state.selected_category = "linux"
+            st.session_state.view = "category"
+    with col3:
+        if st.button("🧠 ML Projects"):
+            st.session_state.selected_category = "ml"
+            st.session_state.view = "category"
+    with col4:
+        if st.button("🌿GIt Task"):
+            st.session_state.selected_category = "git"
+            st.session_state.view = "category"
+
+# Category View: Project Buttons
+elif st.session_state.view == "category":
+    st.subheader(f"📂 {st.session_state.selected_category.capitalize()} Projects")
+    project_map = {
+        "python": [
+            "Check RAM Memory", "WhatsApp Message", "Send Email",
+            "Send Twilio SMS", "Twilio Call", "Twilio WhatsApp",
+            "Google Search", "Scrape Quotes", "Digital Image Creator",
+            "Face Swapper", "Tuple vs List", "Anonymous Email", "Instagram Post","Linkdin Message"
+        ],
+        "linux": ["🏢 Companies Using Linux & Benefits","🖥️ GUI Programs & Their Terminal Commands","🎨 Change Program Icon in Linux","🖲️ Add More Terminals & GUI Interfaces","📡 Send Email, WhatsApp, Tweet & SMS via Terminal","⌨️ Ctrl+C & Ctrl+Z Signal Commands","🔑 Ssh Command Executor"],
+        "ml": ["🧹 Data Imputation Methods","⚖️ Dropped Category Weights","🛠️ Initializer Use Cases","🤖 LLM Structure & Build","⚡ Optimizer Use Cases","🔗 Activation–Pooling Pairs"],
+        "git":["GitHub Repo Uploader","git-feature1-branch-workflow"]
+    }
+    buttons = project_map.get(st.session_state.selected_category, [])
+
+    for i in range(0, len(buttons), 3):
+        cols = st.columns(3)
+        for j, label in enumerate(buttons[i:i+3]):
+            with cols[j]:
+                if st.button(label):
+                    st.session_state.selected_project = label
+                    st.session_state.view = "project"
+                    st.rerun()
+
+# Project View: Execute Project Functionality
+elif st.session_state.view == "project":
+    st.subheader(f"🛠️ {st.session_state.selected_project}")
+    project = st.session_state.selected_project
+
+    if project == "Check RAM Memory":
+        check_memory()
+
+    elif project == "WhatsApp Message":
+        phone = st.text_input("Phone Number (+91...)")
+        msg = st.text_area("Message")
+        if st.button("Send"):
+            send_whatsapp(phone, msg)
+
+    elif project == "Send Email":
+        email = st.text_input("Receiver Email")
+        subject = st.text_input("✉️ Subject")
+        msg = st.text_area("Message")
+        if st.button("Send"):
+            send_email(email, subject,msg)
+
+    elif project == "Send Twilio SMS":
+        number = st.text_input("Phone Number")
+        body = st.text_area("Message Body")
+        if st.button("Send"):
+            send_sms(body, number)
+
+    elif project == "Twilio Call":
+        number = st.text_input("Receiver Phone Number")
+        if st.button("Call"):
+            make_call(number)
+
+    elif project == "Twilio WhatsApp":
+        number = st.text_input("WhatsApp Number (e.g., whatsapp:+91...)")
+        body = st.text_area("Message Body")
+        if st.button("Send WhatsApp"):
+            Random_number_whatsapp_message(number,body)
+
+    elif project == "Google Search":
+        query = st.text_input("Search Query")
+        if st.button("Search"):
+            google_search(query)
+
+    elif project == "Scrape Quotes":
+        url = st.text_input("Quotes Page URL", "http://quotes.toscrape.com/")
+        if st.button("Scrape"):
+            scrape_website(url)
+
+    elif project == "Digital Image Creator":
+        text = st.text_area("Text to Render")
+        if st.button("Create Image"):
+            image_buf = create_image(text)
+            st.image(image_buf, caption="Generated Image", use_column_width=True)
+            st.download_button("📥 Download Image", image_buf, file_name="prompt_image.png", mime="image/png")
+            
+
+    elif project == "Face Swapper":
+        img1 = st.file_uploader("Upload Image 1", type=["jpg", "png"])
+        img2 = st.file_uploader("Upload Image 2", type=["jpg", "png"])
+        if st.button("Swap Faces") and img1 and img2:
+            with open("img1.jpg", "wb") as f:
+                f.write(img1.read())
+            with open("img2.jpg", "wb") as f:
+                f.write(img2.read())
+            output = swap_faces("img1.jpg", "img2.jpg")
+            st.image(output, caption="Swapped Faces")
+
+    elif project == "Tuple vs List":
+        show_tuple_vs_list()
+
+    elif project == "Anonymous Email":
+        to = st.text_input("To Email")
+        subject = st.text_input("Subject")
+        content = st.text_area("Content")
+        if st.button("Send"):
+            send_anonymous_email(to, subject, content)
+
+    elif project == "Instagram Post":
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        img = st.file_uploader("Upload Image", type=["jpg", "png"])
+        caption = st.text_area("Caption")
+        if st.button("Post"):
+            with open("insta.jpg", "wb") as f:
+                f.write(img.read())
+            post_to_instagram(username, password, "insta.jpg", caption)
+    
+
+    elif project == "Linkdin Message":
+        st.subheader("📨 Send Automated LinkedIn Message")
+
+        email = st.text_input("📧 LinkedIn Email")
+        password = st.text_input("🔒 LinkedIn Password", type="password")
+        profile_url = st.text_input("🔗 Profile URL", value="https://www.linkedin.com/in/")
+        message_text = st.text_area("✉️ Message", value="Hi, this is an automated message from Selenium!")
+
+        if st.button("📤 Send Message"):
+            with st.spinner("⏳ Sending your message..."):
+                result = send_linkedin_message(email, password, profile_url, message_text)
+
+                if "✅" in result:
+                    st.success(result)
+                else:
+                    st.error(result)
+                    if os.path.exists("linkedin_error.png"):
+                        st.image("linkedin_error.png", caption="❌ Screenshot of Error", use_column_width=True)
+                    if os.path.exists("after_typing.png"):
+                        st.image("after_typing.png", caption="✉️ After Typing (Debug)", use_column_width=True)
+        
+
+        # linux function
+    if project == "🔑 Ssh Command Executor":
+        run_ssh()
+    elif project == "🏢 Companies Using Linux & Benefits":
+        companies_using_linux()
+    elif project == "🖥️ GUI Programs & Their Terminal Commands":
+        gui_programs_commands()
+    elif project == "🎨 Change Program Icon in Linux":
+        change_program_icon()
+    elif project == "🖲️ Add More Terminals & GUI Interfaces":
+        install_gui_interface()
+    elif project == "📡 Send Email, WhatsApp, Tweet & SMS via Terminal":
+        send_email_whatsapp_tweet_sms()
+    elif project == "⌨️ Ctrl+C & Ctrl+Z Signal Commands":
+        ctrl_signals_instructions()
+
+        #github Task
+
+    elif project == "GitHub Repo Uploader":
+        folder_path = st.text_input("📂 Enter local folder path to create/use (e.g., C:/Users/hp/Desktop/my-folder)")
+        github_repo_name = st.text_input("📝 GitHub Repository Name (already created on GitHub)")
+        token = st.text_input("🔐 GitHub Token", type="password")
+        username = st.text_input("👤 GitHub Username")
+        file = st.file_uploader("📄 Upload a file to push")
+        commit_message = st.text_input("✍️ Commit Message", value="Initial commit")
+
+        if st.button("🚀 Push to GitHub"):
+            if file and folder_path and github_repo_name and token and username:
+                with open(file.name, "wb") as f:
+                    f.write(file.read())
+                push_to_existing_github_repo(folder_path, github_repo_name, token, username, file.name, commit_message)
+
+    elif project == "git-feature1-branch-workflow":
+        folder_path = st.text_input("📂 Local project folder path")
+        repo_name = st.text_input("📦 Repository name")
+        github_user = st.text_input("👤 GitHub username")
+        github_token = st.text_input("🔑 GitHub Personal Access Token", type="password")
+
+        if st.button("Run Git Workflow"):
+            run_git_workflow(folder_path, repo_name, github_user, github_token)
+
+    elif project == "git-fork-clone-pr-workflow":
+        folder_path = st.text_input("📂 Local project folder path")
+        original_repo = st.text_input("🔗 Original repository (owner/repo)", help="Example: octocat/Hello-World")
+        repo_name = st.text_input("📦 Your forked repository name")
+        github_user = st.text_input("👤 Your GitHub username")
+        github_token = st.text_input("🔑 GitHub Personal Access Token", type="password")
+
+        if st.button("Run Git Fork-Clone-PR Workflow"):
+            run_git_fork_clone_pr_workflow(folder_path, original_repo, repo_name, github_user, github_token)
+
+
+    elif project == "🧹 Data Imputation Methods":
+        uploaded_file = st.file_uploader("📂 Upload CSV file", type=["csv"], help="Choose your dataset file")
+        
+        if uploaded_file is not None:
+            if st.button("🧹 Show Data Imputation Methods"):
+                show_data_imputation_methods(uploaded_file)  # Pass file-like object
+    
+
+
+    elif project == "⚖️ Dropped Category Weights":
+        import pandas as pd
+
+        uploaded_file = st.file_uploader("📂 Upload CSV file", type=["csv"])
+
+        if uploaded_file is not None:
+            try:
+                df = pd.read_csv(uploaded_file)
+                categorical_col = st.selectbox("🏷️ Select Categorical Column", df.select_dtypes(exclude=['number']).columns)
+                target_col = st.selectbox("🎯 Select Target Column", df.columns)
+                numeric_cols_list = st.multiselect(
+                    "🔢 Select Numeric Columns", 
+                    df.select_dtypes(include=['number']).columns
+                )
+                if st.button("⚖️ Show Dropped Category Effect"):
+                    show_dropped_category_effect(df, categorical_col, target_col, numeric_cols_list)
+            except Exception as e:
+                st.error(f"❌ Error reading file: {e}")
+        else:
+            st.info("⬆ Please upload a CSV file to continue.")
+
+
+
+    elif project == "🛠️ Initializer Use Cases":
+        if st.button("📝 Generate Initializer Blog"):
+            blog_content = generate_optimizer_blog()
+            st.markdown(blog_content)
+    
+    elif project == "🤖 LLM Structure & Build":
+        gemini_prompt_response()
+
+
+    elif project == "⚡ Optimizer Use Cases":
+        if st.button("⚡ Generate Optimizer Blog"):
+            blog_content = generate_optimizer_blog()
+            st.markdown(blog_content)
+
+    elif project == "🔗 Activation–Pooling Pairs":
+        if st.button("⚡ Show Activation & Pooling Pairings"):
+            activation_pooling_pairings()
+
+
+
